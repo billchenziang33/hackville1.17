@@ -16,15 +16,14 @@ class Settings(BaseSettings):
     database_port: int = 5432
     database_name: str = ""
 
-    # JWT (not used with Supabase, but kept for reference)
+    # JWT (not used with Firebase, but kept for reference)
     secret_key: str = "your-secret-key-change-in-production"
     algorithm: str = "HS256"
     access_token_expire_minutes: int = 30
 
-    # Supabase
-    supabase_url: str = ""
-    supabase_key: str = ""
-    supabase_audio_bucket: str = "media"
+    # Firebase
+    firebase_credentials_path: str = ""  # Path to service account JSON file
+    firebase_api_key: str = ""  # Web API key from Firebase Console
 
     # AssemblyAI
     assemblyai_key: str = ""
