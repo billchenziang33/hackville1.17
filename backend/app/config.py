@@ -25,6 +25,9 @@ class Settings(BaseSettings):
     firebase_credentials_path: str = ""  # Path to service account JSON file
     firebase_api_key: str = ""  # Web API key from Firebase Console
 
+    # MongoDB
+    mongodb_url: str = ""  # MongoDB Atlas connection string
+
     # AssemblyAI
     assemblyai_key: str = ""
     speech_model: str = "universal"
