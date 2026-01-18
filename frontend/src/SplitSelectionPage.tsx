@@ -50,7 +50,7 @@ const SplitSelectionPage: React.FC<SplitSelectionPageProps> = ({
         transition={{ type: "spring", stiffness: 120, damping: 20 }}
         style={{
           flex: 1,
-          background: "linear-gradient(135deg, #ff4d4d 0%, #b30000 100%)",
+          background: "linear-gradient(135deg, #cc4d4d 0%, #b30000 100%)",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
@@ -82,7 +82,7 @@ const SplitSelectionPage: React.FC<SplitSelectionPageProps> = ({
         transition={{ type: "spring", stiffness: 120, damping: 20 }}
         style={{
           flex: 1,
-          background: "linear-gradient(135deg, #ffffff 0%, #e6e9f0 100%)",
+          background: "linear-gradient(135deg, #cccccc 0%, #e6e9f0 100%)",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",

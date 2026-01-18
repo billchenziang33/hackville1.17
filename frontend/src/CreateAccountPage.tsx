@@ -19,8 +19,6 @@ const CreateAccountPage: React.FC<CreateAccountPageProps> = ({
   const handleSignup = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // ✅ MVP：不做任何校验、不请求后端
-    // 只要点了 Sign Up，立刻进入 User Preferences
     onAccountCreated();
   };
 

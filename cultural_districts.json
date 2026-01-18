@@ -4,140 +4,314 @@
       "id": "chinatown",
       "name": "Chinatown (Dundas)",
       "location": "Dundas St W & Spadina Ave, Toronto, ON",
-      "primary_community": "Early Hong Kong/Guangdong immigrants and new international students",
+      "primary_community": "Cantonese and Mandarin-speaking Chinese immigrants",
       "cultural_characteristics": [
-        "Traditional Chinese architecture with decorative gates",
-        "Herbal medicine shops and traditional Chinese medicine clinics",
-        "Cantonese as the dominant service language",
-        "Lunar New Year parade and traditional festival celebrations",
-        "Dense concentration of Asian grocery stores and restaurants"
+        "Traditional Chinese architecture and gates",
+        "Herbal medicine and traditional clinics",
+        "Cantonese-dominant service language",
+        "Dense Chinese food and retail ecosystem",
+        "Lunar calendar–based festivals"
       ],
       "key_services_needed": [
-        "Cantonese-language social programs for isolated seniors",
-        "International student orientation and settlement services",
-        "Food banks stocking traditional Chinese ingredients",
-        "Affordable healthcare clinics with Cantonese/Mandarin speakers",
-        "Cultural preservation and language classes"
+        "Chinese-language senior services",
+        "Immigration and settlement support",
+        "Culturally appropriate healthcare access",
+        "Food security with traditional ingredients",
+        "Language preservation programs"
       ],
       "service_languages": ["Cantonese", "Mandarin", "English"],
-      "cultural_events": ["Lunar New Year Parade", "Mid-Autumn Festival", "Night Market"]
+      "cultural_events": ["Lunar New Year", "Mid-Autumn Festival"]
     },
     {
       "id": "little_italy",
       "name": "Little Italy",
       "location": "College St between Bathurst St and Ossington Ave, Toronto, ON",
-      "primary_community": "Italian-Canadians (multi-generational families)",
+      "primary_community": "Italian-Canadian families",
       "cultural_characteristics": [
-        "Traditional Italian cafes and espresso bars",
-        "Family-owned trattorias and gelaterias",
-        "Summer patio culture with sidewalk dining",
-        "Soccer (calcio) fan culture with sports bars",
-        "European-style pedestrian-friendly streets"
+        "Italian cafes and espresso culture",
+        "Family-owned restaurants",
+        "Strong intergenerational ties",
+        "Soccer-centered social life",
+        "Pedestrian street culture"
       ],
       "key_services_needed": [
-        "Italian-language elder care and senior social programs",
-        "Cultural heritage workshops and cooking classes",
-        "Small business support for family-owned restaurants",
-        "Community gathering spaces with piazza-style design",
-        "Intergenerational family support services"
+        "Italian-language senior programs",
+        "Cultural heritage preservation",
+        "Small business support",
+        "Intergenerational family services",
+        "Community gathering spaces"
       ],
       "service_languages": ["Italian", "English"],
-      "cultural_events": ["Taste of Little Italy Festival", "Italian Week", "European-style street festivals"]
-    },
-    {
-      "id": "koreatown",
-      "name": "Koreatown",
-      "location": "Bloor St W between Bathurst St and Christie St, Toronto, ON",
-      "primary_community": "Korean immigrants, international students, and young professionals",
-      "cultural_characteristics": [
-        "24-hour business culture with late-night restaurants",
-        "Korean BBQ restaurants and specialized cafes",
-        "K-POP music stores and beauty supply shops",
-        "High concentration of tech and electronics stores",
-        "Modern, clean aesthetic with neon signage"
-      ],
-      "key_services_needed": [
-        "Korean-language mental health and counseling services",
-        "International student employment and career counseling",
-        "Driver's license conversion assistance for Korean licenses",
-        "Digital literacy programs for older immigrants",
-        "Cultural adaptation support for new arrivals"
-      ],
-      "service_languages": ["Korean", "English"],
-      "cultural_events": ["Korean Festival", "K-POP concerts and events", "Traditional Korean holiday celebrations"]
-    },
-    {
-      "id": "jtown",
-      "name": "J-Town (Japanese Community)",
-      "location": "Steeles Ave & Victoria Park Ave, North Scarborough, Toronto, ON",
-      "primary_community": "Japanese expatriate families and Japanese-Canadians",
-      "cultural_characteristics": [
-        "Exceptionally clean and orderly commercial areas",
-        "Japanese supermarkets with imported goods",
-        "Manga/book stores and traditional craft shops",
-        "Minimalist design aesthetic",
-        "Quiet, respectful public behavior norms"
-      ],
-      "key_services_needed": [
-        "Japanese-language educational resources for children",
-        "Transition support for expatriate families on fixed-term contracts",
-        "Detailed recycling and waste sorting guidance (3+ categories)",
-        "Temporary housing assistance for corporate transferees",
-        "Cultural exchange programs to prevent isolation"
-      ],
-      "service_languages": ["Japanese", "English"],
-      "cultural_events": ["Sakura (Cherry Blossom) Festival", "Matsuri summer festivals", "Cultural demonstrations"]
-    },
-    {
-      "id": "little_portugal",
-      "name": "Little Portugal",
-      "location": "Dundas St W between Ossington Ave and Dufferin St, Toronto, ON",
-      "primary_community": "Portuguese immigrants and their descendants (multi-generational)",
-      "cultural_characteristics": [
-        "Portuguese bakeries specializing in pastel de nata (custard tarts)",
-        "Grilled chicken (churrasqueira) restaurants",
-        "High density of Catholic churches with Portuguese services",
-        "Blue and white decorative motifs (inspired by Azulejo tiles)",
-        "Strong community soccer (futebol) culture"
-      ],
-      "key_services_needed": [
-        "Portuguese-language legal and immigration consultation",
-        "Construction and trades union information (dominant employment sector)",
-        "Senior services with Portuguese-speaking staff",
-        "Community sports facilities and soccer league support",
-        "Small business financing for family-owned shops"
-      ],
-      "service_languages": ["Portuguese", "English"],
-      "cultural_events": ["Portugal Day celebrations", "Santo Cristo Festival", "Street festivals with traditional music"]
+      "cultural_events": ["Taste of Little Italy"]
     },
     {
       "id": "greektown",
       "name": "Greektown (The Danforth)",
       "location": "Danforth Ave between Broadview Ave and Jones Ave, Toronto, ON",
-      "primary_community": "Greek-Canadians (well-established community)",
+      "primary_community": "Greek-Canadians",
       "cultural_characteristics": [
-        "Blue and white color scheme (inspired by Greek islands)",
-        "Mediterranean restaurants with outdoor seating",
-        "Greek pastry shops (baklava, loukoumades)",
-        "Greek Orthodox churches as community centers",
-        "European-style cafe culture with strong coffee"
+        "Mediterranean dining culture",
+        "Greek Orthodox churches",
+        "Blue-and-white visual identity",
+        "Cafe and pastry traditions",
+        "Strong community institutions"
       ],
       "key_services_needed": [
-        "Greek-language health services focusing on cardiac care",
-        "Mediterranean diet education and cooking classes",
-        "Senior programs addressing social isolation",
-        "Cultural preservation and Greek language classes",
-        "Small business support for family-owned restaurants"
+        "Greek-language healthcare",
+        "Senior social programs",
+        "Greek language education",
+        "Cultural preservation",
+        "Small business continuity"
       ],
       "service_languages": ["Greek", "English"],
-      "cultural_events": ["Taste of the Danforth Festival", "Greek Independence Day parade", "Orthodox Easter celebrations"]
+      "cultural_events": ["Taste of the Danforth", "Greek Independence Day"]
+    },
+    {
+      "id": "little_portugal",
+      "name": "Little Portugal",
+      "location": "Dundas St W between Ossington Ave and Dufferin St, Toronto, ON",
+      "primary_community": "Portuguese immigrants and descendants",
+      "cultural_characteristics": [
+        "Portuguese bakeries and cafes",
+        "Catholic religious life",
+        "Azulejo-inspired design",
+        "Soccer-oriented community culture",
+        "Family-centered neighborhoods"
+      ],
+      "key_services_needed": [
+        "Portuguese-language legal services",
+        "Senior care programs",
+        "Trades workforce support",
+        "Community sports facilities",
+        "Small business financing"
+      ],
+      "service_languages": ["Portuguese", "English"],
+      "cultural_events": ["Portugal Day"]
+    },
+    {
+      "id": "koreatown",
+      "name": "Koreatown",
+      "location": "Bloor St W between Bathurst St and Christie St, Toronto, ON",
+      "primary_community": "Korean immigrants and students",
+      "cultural_characteristics": [
+        "Late-night business culture",
+        "Korean BBQ and cafes",
+        "K-pop and beauty retail",
+        "Neon signage aesthetic",
+        "Dense commercial strip"
+      ],
+      "key_services_needed": [
+        "Korean-language mental health services",
+        "Student employment support",
+        "Credential recognition help",
+        "Digital literacy for seniors",
+        "Cultural adaptation services"
+      ],
+      "service_languages": ["Korean", "English"],
+      "cultural_events": ["Korean Festival"]
+    },
+    {
+      "id": "jtown",
+      "name": "J-Town (Japanese Community)",
+      "location": "Steeles Ave & Victoria Park Ave, Toronto, ON",
+      "primary_community": "Japanese expatriates and Japanese-Canadians",
+      "cultural_characteristics": [
+        "Japanese supermarkets and bookstores",
+        "Minimalist commercial design",
+        "Orderly and quiet public norms",
+        "Temporary expatriate population",
+        "Strong education focus"
+      ],
+      "key_services_needed": [
+        "Japanese-language schooling support",
+        "Short-term housing assistance",
+        "Corporate relocation services",
+        "Cultural exchange programs",
+        "Family integration support"
+      ],
+      "service_languages": ["Japanese", "English"],
+      "cultural_events": ["Sakura Festival"]
+    },
+    {
+      "id": "little_india",
+      "name": "Little India (Gerrard Bazaar)",
+      "location": "Gerrard St E between Coxwell Ave and Greenwood Ave, Toronto, ON",
+      "primary_community": "South Asian communities",
+      "cultural_characteristics": [
+        "South Asian clothing and jewelry",
+        "Bollywood cultural influence",
+        "Religious diversity",
+        "Festival-oriented retail",
+        "Family-owned businesses"
+      ],
+      "key_services_needed": [
+        "South Asian language settlement services",
+        "Women’s employment programs",
+        "Small business modernization",
+        "Culturally sensitive healthcare",
+        "Interfaith support services"
+      ],
+      "service_languages": ["Hindi", "Urdu", "Punjabi", "Tamil", "English"],
+      "cultural_events": ["Diwali"]
+    },
+    {
+      "id": "north_york_persian",
+      "name": "North York Persian Community",
+      "location": "Yonge St between Finch Ave and Steeles Ave, Toronto, ON",
+      "primary_community": "Iranian (Persian) immigrants",
+      "cultural_characteristics": [
+        "Persian restaurants and cafes",
+        "Strong professional class presence",
+        "Cultural emphasis on poetry and arts",
+        "Family-centered social life",
+        "Entrepreneurial businesses"
+      ],
+      "key_services_needed": [
+        "Persian-language mental health services",
+        "Credential recognition assistance",
+        "Youth cultural identity programs",
+        "Community arts funding",
+        "Small business support"
+      ],
+      "service_languages": ["Persian", "English"],
+      "cultural_events": ["Nowruz"]
+    },
+    {
+      "id": "thorncliffe_park",
+      "name": "Thorncliffe Park",
+      "location": "Overlea Blvd & Thorncliffe Park Dr, Toronto, ON",
+      "primary_community": "Middle Eastern immigrants",
+      "cultural_characteristics": [
+        "Halal food ecosystem",
+        "Mosques and Islamic centers",
+        "High-density family housing",
+        "Strong newcomer presence",
+        "Community-based organizations"
+      ],
+      "key_services_needed": [
+        "Arabic-language settlement services",
+        "Women-focused employment programs",
+        "Public health outreach",
+        "Youth recreation services",
+        "Housing stability support"
+      ],
+      "service_languages": ["Arabic", "English"],
+      "cultural_events": ["Ramadan", "Eid"]
+    },
+    {
+      "id": "scarborough_tamil",
+      "name": "Scarborough Tamil Community",
+      "location": "Markham Rd & Eglinton Ave E, Toronto, ON",
+      "primary_community": "Sri Lankan Tamil immigrants",
+      "cultural_characteristics": [
+        "Tamil temples",
+        "Tamil-language businesses",
+        "Strong refugee history",
+        "Family-centered culture",
+        "Distinct food traditions"
+      ],
+      "key_services_needed": [
+        "Tamil-language mental health services",
+        "Youth education support",
+        "Refugee settlement assistance",
+        "Senior care programs",
+        "Community cultural preservation"
+      ],
+      "service_languages": ["Tamil", "English"],
+      "cultural_events": ["Thai Pongal"]
+    },
+    {
+      "id": "east_york_caribbean",
+      "name": "East York Caribbean Community",
+      "location": "Eglinton Ave E area, Toronto, ON",
+      "primary_community": "Caribbean communities",
+      "cultural_characteristics": [
+        "Caribbean food culture",
+        "Music-centered social life",
+        "Church-based networks",
+        "Barbershop social hubs",
+        "Carnival traditions"
+      ],
+      "key_services_needed": [
+        "Youth mentorship programs",
+        "Mental health support",
+        "Arts and music funding",
+        "Community safety initiatives",
+        "Employment readiness programs"
+      ],
+      "service_languages": ["English", "Caribbean Creoles"],
+      "cultural_events": ["Caribana"]
+    },
+    {
+      "id": "weston_latin_american",
+      "name": "Weston Latin American Community",
+      "location": "Weston Rd & Lawrence Ave W, Toronto, ON",
+      "primary_community": "Latin American immigrants",
+      "cultural_characteristics": [
+        "Spanish-language churches",
+        "Latin grocery stores",
+        "Strong family orientation",
+        "Community-led organizations",
+        "Traditional music and dance"
+      ],
+      "key_services_needed": [
+        "Spanish-language settlement services",
+        "Immigration legal support",
+        "Youth education programs",
+        "Employment placement",
+        "Family violence prevention services"
+      ],
+      "service_languages": ["Spanish", "English"],
+      "cultural_events": ["Latin American festivals"]
+    },
+    {
+      "id": "somali_rexdale",
+      "name": "Rexdale Somali Community",
+      "location": "Islington Ave & Finch Ave W, Toronto, ON",
+      "primary_community": "Somali immigrants and refugees",
+      "cultural_characteristics": [
+        "Halal markets",
+        "Mosques as community hubs",
+        "Strong clan-based networks",
+        "Youth-led organizations",
+        "Oral cultural traditions"
+      ],
+      "key_services_needed": [
+        "Somali-language settlement services",
+        "Youth employment programs",
+        "Mental health services",
+        "Women’s support programs",
+        "Community mediation services"
+      ],
+      "service_languages": ["Somali", "English"],
+      "cultural_events": ["Eid"]
+    },
+    {
+      "id": "jewish_bathurst",
+      "name": "Bathurst Jewish Community",
+      "location": "Bathurst St between Lawrence Ave and Steeles Ave, Toronto, ON",
+      "primary_community": "Jewish communities (Orthodox and Conservative)",
+      "cultural_characteristics": [
+        "Kosher food ecosystem",
+        "Synagogues and schools",
+        "Walkable Sabbath-oriented neighborhoods",
+        "Strong educational institutions",
+        "Community social services"
+      ],
+      "key_services_needed": [
+        "Kosher food access support",
+        "Senior services",
+        "Religious education",
+        "Family support services",
+        "Community safety programs"
+      ],
+      "service_languages": ["English", "Hebrew"],
+      "cultural_events": ["Hanukkah", "Passover"]
     }
   ],
   "metadata": {
     "city": "Toronto, Ontario",
-    "data_source": "Compiled from Toronto cultural district profiles, census data, and community organization reports",
     "last_updated": "2026-01-18",
-    "purpose": "AccessLocal community resource navigation platform - cultural sensitivity optimization",
-    "note": "Services listed reflect commonly identified needs based on demographic profiles and community consultations"
+    "purpose": "Cultural background clustering for mapping and service personalization"
   }
 }
