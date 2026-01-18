@@ -14,42 +14,11 @@ const LoginPage: React.FC<LoginPageProps> = ({
 }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
-    setLoading(true);
-
-    try {
-      const response = await fetch("http://localhost:8000/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
-      });
-
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.detail || "Login failed");
-      }
-
-      const data = await response.json();
-      console.log("Login successful, token:", data.access_token);
-
-      // ✅ 这里不做页面决定，只通知 App.tsx
-      onLoginSuccess();
-    } catch (err: any) {
-      console.error("Login error:", err);
-      setError(err.message || "Login failed");
-    } finally {
-      setLoading(false);
-    }
+    if (!email || !password) return;
+    onLoginSuccess();
   };
 
   return (
@@ -64,7 +33,6 @@ const LoginPage: React.FC<LoginPageProps> = ({
         position: "relative",
       }}
     >
-      {/* ← Back */}
       <motion.button
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
@@ -78,24 +46,20 @@ const LoginPage: React.FC<LoginPageProps> = ({
           fontSize: "1.5rem",
           cursor: "pointer",
           color: "#333",
-          display: "flex",
-          alignItems: "center",
-          gap: "5px",
-          fontWeight: "600",
+          fontWeight: 600,
         }}
       >
         ← Back
       </motion.button>
 
-      {/* Card */}
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         style={{
-          backgroundColor: "white",
+          backgroundColor: "#fff",
           padding: "40px",
           borderRadius: "20px",
-          boxShadow: "0 10px 25px rgba(0,0,0,0.05)",
+          boxShadow: "0 10px 25px rgba(0,0,0,0.08)",
           width: "100%",
           maxWidth: "400px",
         }}
@@ -103,7 +67,7 @@ const LoginPage: React.FC<LoginPageProps> = ({
         <h2
           style={{
             color: "#CC0000",
-            fontWeight: "800",
+            fontWeight: 800,
             marginBottom: "30px",
             textAlign: "center",
             fontSize: "2rem",
@@ -112,28 +76,20 @@ const LoginPage: React.FC<LoginPageProps> = ({
           Welcome Back
         </h2>
 
-        {error && (
-          <div
-            style={{
-              color: "red",
-              marginBottom: "15px",
-              textAlign: "center",
-            }}
-          >
-            {error}
-          </div>
-        )}
-
         <form
           onSubmit={handleLogin}
-          style={{ display: "flex", flexDirection: "column", gap: "20px" }}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "20px",
+          }}
         >
           <div>
             <label
               style={{
                 display: "block",
                 marginBottom: "8px",
-                fontWeight: "600",
+                fontWeight: 600,
                 color: "#333",
               }}
             >
@@ -143,15 +99,14 @@ const LoginPage: React.FC<LoginPageProps> = ({
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email"
               required
+              placeholder="Enter your email"
               style={{
                 width: "100%",
                 padding: "12px",
                 borderRadius: "8px",
                 border: "1px solid #ddd",
                 fontSize: "1rem",
-                boxSizing: "border-box",
               }}
             />
           </div>
@@ -161,7 +116,7 @@ const LoginPage: React.FC<LoginPageProps> = ({
               style={{
                 display: "block",
                 marginBottom: "8px",
-                fontWeight: "600",
+                fontWeight: 600,
                 color: "#333",
               }}
             >
@@ -171,15 +126,14 @@ const LoginPage: React.FC<LoginPageProps> = ({
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter your password"
               required
+              placeholder="Enter your password"
               style={{
                 width: "100%",
                 padding: "12px",
                 borderRadius: "8px",
                 border: "1px solid #ddd",
                 fontSize: "1rem",
-                boxSizing: "border-box",
               }}
             />
           </div>
@@ -188,20 +142,19 @@ const LoginPage: React.FC<LoginPageProps> = ({
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             type="submit"
-            disabled={loading}
             style={{
               marginTop: "10px",
               padding: "14px",
-              backgroundColor: loading ? "#ccc" : "#CC0000",
-              color: "white",
+              backgroundColor: "#CC0000",
+              color: "#fff",
               border: "none",
               borderRadius: "8px",
               fontWeight: "bold",
               fontSize: "1rem",
-              cursor: loading ? "not-allowed" : "pointer",
+              cursor: "pointer",
             }}
           >
-            {loading ? "Logging in..." : "Login"}
+            Login
           </motion.button>
         </form>
 
@@ -218,7 +171,7 @@ const LoginPage: React.FC<LoginPageProps> = ({
             onClick={onCreateAccountClick}
             style={{
               color: "#CC0000",
-              fontWeight: "bold",
+              fontWeight: 700,
               cursor: "pointer",
               textDecoration: "underline",
             }}

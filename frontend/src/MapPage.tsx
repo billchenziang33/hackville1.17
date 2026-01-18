@@ -6,12 +6,17 @@ interface MapPageProps {
   onBack: () => void;
 }
 
-const TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
-mapboxgl.accessToken = TOKEN;
+const TOKEN = import.meta.env.VITE_MAPBOX_TOKEN as string | undefined;
+
+if (TOKEN) {
+  mapboxgl.accessToken = TOKEN;
+}
 
 export default function MapPage({ onBack }: MapPageProps) {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
-  const [error, setError] = useState<string>("");
+  const mapRef = useRef<mapboxgl.Map | null>(null);
+
+  const [error, setError] = useState<string | null>(null);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -21,11 +26,14 @@ export default function MapPage({ onBack }: MapPageProps) {
     }
 
     if (!mapboxgl.supported()) {
-      setError("WebGL not supported");
+      setError("WebGL is not supported in this browser");
       return;
     }
 
     if (!mapContainerRef.current) return;
+
+    // 🚫 防止重复初始化
+    if (mapRef.current) return;
 
     try {
       const map = new mapboxgl.Map({
@@ -35,92 +43,121 @@ export default function MapPage({ onBack }: MapPageProps) {
         zoom: 10,
       });
 
+      mapRef.current = map;
+
       map.on("load", () => {
         map.resize();
-        console.log("✅ Map fully loaded");
         setLoaded(true);
+        console.log("✅ Mapbox loaded");
       });
 
       map.on("error", (e) => {
-        console.error("❌ Mapbox error", e);
-        setError(`Mapbox error: ${e.error?.message || "Unknown error"}`);
+        console.error("❌ Mapbox runtime error", e);
+        setError(e.error?.message || "Unknown Mapbox error");
       });
-
-      return () => map.remove();
     } catch (err: any) {
-      setError(`Initialization error: ${err.message}`);
+      console.error("❌ Mapbox init error", err);
+      setError(err.message || "Map initialization failed");
     }
+
+    return () => {
+      if (mapRef.current) {
+        mapRef.current.remove();
+        mapRef.current = null;
+      }
+    };
   }, []);
 
   return (
-    <div style={{ position: "relative", width: "100%", height: "100vh" }}>
-      {/* 🔙 Return Button */}
-      <button
-        onClick={() => {
-          console.log("RETURN CLICKED");
-          onBack();
-        }}
-        style={{
-          position: "absolute",
-          top: "16px",
-          left: "16px",
-          zIndex: 1001,
-          pointerEvents: "auto", // ✅ 关键：强制接收点击
-          padding: "8px 14px",
-          borderRadius: "999px",
-          border: "none",
-          background: "rgba(0,0,0,0.75)",
-          color: "white",
-          cursor: "pointer",
-          fontWeight: 600,
-        }}
-      >
-        ← Return
-      </button>
-
-      {/* Error Overlay */}
-      {error && (
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            zIndex: 1000,
-            background: "rgba(255,0,0,0.8)",
-            color: "white",
-            padding: "20px",
-          }}
-        >
-          Error: {error}
-        </div>
-      )}
-
-      {/* Loading Overlay */}
-      {!loaded && !error && (
-        <div
-          style={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            zIndex: 10,
-            background: "white",
-            padding: "10px",
-          }}
-        >
-          Loading Map... (Token: {TOKEN ? "Present" : "Missing"})
-        </div>
-      )}
-
-      {/* Map Container */}
+    <div
+      style={{
+        position: "relative",
+        width: "100%",
+        height: "100vh",
+        overflow: "hidden",
+      }}
+    >
+      {/* =========================
+          🗺️ Map Layer
+      ========================= */}
       <div
         ref={mapContainerRef}
         style={{
-          width: "100%",
-          height: "100%",
-          pointerEvents: "none", // ✅ 关键：不吃掉 UI 的点击事件
+          position: "absolute",
+          inset: 0,
+          zIndex: 1,
         }}
       />
+
+      {/* =========================
+          🎛️ UI Layer
+      ========================= */}
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          zIndex: 10,
+          pointerEvents: "none",
+        }}
+      >
+        {/* Back Button */}
+        <button
+          onClick={onBack}
+          style={{
+            position: "absolute",
+            top: "16px",
+            left: "16px",
+            pointerEvents: "auto",
+            padding: "8px 14px",
+            borderRadius: "999px",
+            border: "none",
+            background: "rgba(0,0,0,0.75)",
+            color: "white",
+            cursor: "pointer",
+            fontWeight: 600,
+          }}
+        >
+          ← Return
+        </button>
+
+        {/* Loading Overlay */}
+        {!loaded && !error && (
+          <div
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              background: "white",
+              padding: "12px 16px",
+              borderRadius: "8px",
+              fontWeight: 600,
+              pointerEvents: "none",
+              boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+            }}
+          >
+            Loading Map…
+          </div>
+        )}
+
+        {/* Error Overlay */}
+        {error && (
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              background: "rgba(200,0,0,0.9)",
+              color: "white",
+              padding: "14px 16px",
+              fontWeight: 600,
+            }}
+          >
+            Map Error: {error}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

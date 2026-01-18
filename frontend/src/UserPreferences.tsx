@@ -1,16 +1,8 @@
 import { useState } from "react";
 
 interface UserPreferencesProps {
-  onSubmit: (preferences: {
-    preferredLanguage: string;
-    culturalBackground: string;
-    ethnicity?: string;
-    background?: string;
-    nationality?: string;
-    religion?: string;
-    time_in_canada_months?: number;
-    city?: string;
-  }) => void;
+  onSubmit: () => void;
+  onBack: () => void;
 }
 
 type Step = "language" | "cultural";
@@ -33,7 +25,7 @@ const CULTURAL_BACKGROUNDS = [
   { value: "other", label: "Other", emoji: "🌎" },
 ];
 
-export default function UserPreferences({ onSubmit }: UserPreferencesProps) {
+export default function UserPreferences({ onSubmit, onBack }: UserPreferencesProps) {
   const [step, setStep] = useState<Step>("language");
 
   const [preferredLanguage, setPreferredLanguage] = useState("");
@@ -50,7 +42,8 @@ export default function UserPreferences({ onSubmit }: UserPreferencesProps) {
 
   const handleSave = () => {
     if (!canSave) return;
-    onSubmit({
+
+    const preferences = {
       preferredLanguage,
       culturalBackground,
       ethnicity: ethnicity || undefined,
@@ -60,16 +53,30 @@ export default function UserPreferences({ onSubmit }: UserPreferencesProps) {
       time_in_canada_months:
         timeInCanada === "" ? undefined : Number(timeInCanada),
       city: city || undefined,
-    });
+    };
+
+    // ✅ 本地保存（MVP）
+    localStorage.setItem("userPreferences", JSON.stringify(preferences));
+    localStorage.setItem("onboardingCompleted", "true");
+
+    console.log("Saved preferences:", preferences);
+
+    // ✅ 只通知 App：可以去下一页了
+    onSubmit();
   };
 
   return (
     <div style={cardStyle}>
+      {/* Back */}
+      <button onClick={onBack} style={backButton}>
+        ← Back
+      </button>
+
       <h1 style={titleStyle}>👋 Welcome</h1>
       <p style={subtitleStyle}>Help us personalize your experience.</p>
 
       <div style={gridStyle}>
-        {/* LEFT — ONLY render current step */}
+        {/* LEFT */}
         <div>
           {step === "language" && (
             <Section title="🌍 Choose Your Language">
@@ -110,21 +117,9 @@ export default function UserPreferences({ onSubmit }: UserPreferencesProps) {
           <Section title="🧾 Other Details">
             <div style={rightInner}>
               <Input placeholder="Ethnicity" value={ethnicity} onChange={setEthnicity} />
-              <Input
-                placeholder="Family / Cultural Background"
-                value={background}
-                onChange={setBackground}
-              />
-              <Input
-                placeholder="Nationality"
-                value={nationality}
-                onChange={setNationality}
-              />
-              <Input
-                placeholder="Religion (optional)"
-                value={religion}
-                onChange={setReligion}
-              />
+              <Input placeholder="Family / Cultural Background" value={background} onChange={setBackground} />
+              <Input placeholder="Nationality" value={nationality} onChange={setNationality} />
+              <Input placeholder="Religion (optional)" value={religion} onChange={setReligion} />
               <Input
                 type="number"
                 placeholder="Time in Canada (months)"
@@ -140,18 +135,15 @@ export default function UserPreferences({ onSubmit }: UserPreferencesProps) {
       <button
         onClick={handleSave}
         disabled={!canSave}
-        style={{
-          ...buttonStyle,
-          opacity: canSave ? 1 : 0.4,
-        }}
+        style={{ ...buttonStyle, opacity: canSave ? 1 : 0.4 }}
       >
-        💾 Save Information
+        💾 Save & Continue
       </button>
     </div>
   );
 }
 
-/* ===== Components ===== */
+/* ===== Components & Styles（保持你原来的） ===== */
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -215,6 +207,18 @@ const cardStyle: React.CSSProperties = {
   display: "flex",
   flexDirection: "column",
   color: "#000",
+  position: "relative",
+};
+
+const backButton = {
+  position: "absolute" as const,
+  top: "20px",
+  left: "20px",
+  border: "none",
+  background: "none",
+  fontSize: "1rem",
+  cursor: "pointer",
+  fontWeight: 600,
 };
 
 const titleStyle = { fontSize: "2rem", marginBottom: "0.3rem" };
@@ -223,7 +227,7 @@ const subtitleStyle = { marginBottom: "1.6rem" };
 const gridStyle: React.CSSProperties = {
   flex: 1,
   display: "grid",
-  gridTemplateColumns: "2fr 1.3fr", // 左宽右窄
+  gridTemplateColumns: "2fr 1.3fr",
   gap: "1.6rem",
 };
 
