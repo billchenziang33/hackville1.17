@@ -185,9 +185,9 @@ export default function MapPage() {
           zIndex: 9999,
         }}
       >
-        <form onSubmit={handleSearch} style={{ 
-          display: "flex", 
-          gap: 6, 
+        <form onSubmit={handleSearch} style={{
+          display: "flex",
+          gap: 6,
           background: "white",
           padding: 8,
           borderRadius: 8,
@@ -280,10 +280,10 @@ export default function MapPage() {
         <h4 style={{ margin: "0 0 12px 0", fontSize: 13, fontWeight: 600, color: "#333" }}>Legend</h4>
         {Object.entries(typeColors).map(([type, color]) => (
           <div key={type} style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
-            <div style={{ 
-              width: 28, 
-              height: 28, 
-              borderRadius: "50%", 
+            <div style={{
+              width: 28,
+              height: 28,
+              borderRadius: "50%",
               background: color,
               display: "flex",
               alignItems: "center",

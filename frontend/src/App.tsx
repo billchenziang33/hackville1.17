@@ -16,12 +16,14 @@ function App() {
         <LoginPage
           onLoginSuccess={() => setCurrentView("map")}
           onCreateAccountClick={() => setCurrentView("register")}
+          onBack={() => setCurrentView("intro")}
         />
       )}
       {currentView === "register" && (
         <CreateAccountPage
           onAccountCreated={() => setCurrentView("map")}
           onLoginClick={() => setCurrentView("login")}
+          onBack={() => setCurrentView("login")}
         />
       )}
       {currentView === "map" && (

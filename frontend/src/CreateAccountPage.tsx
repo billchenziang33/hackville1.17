@@ -4,18 +4,48 @@ import { motion } from "framer-motion";
 interface CreateAccountPageProps {
     onAccountCreated: () => void;
     onLoginClick: () => void;
+    onBack: () => void;
 }
 
-const CreateAccountPage: React.FC<CreateAccountPageProps> = ({ onAccountCreated, onLoginClick }) => {
+const CreateAccountPage: React.FC<CreateAccountPageProps> = ({ onAccountCreated, onLoginClick, onBack }) => {
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
 
-    const handleSignup = (e: React.FormEvent) => {
+    const handleSignup = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log("Creating account with", username, email, password);
-        // TODO: Implement actual signup logic
-        onAccountCreated();
+        setError("");
+        setLoading(true);
+
+        try {
+            const response = await fetch("http://localhost:8000/auth/register", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    email,
+                    username,
+                    password,
+                }),
+            });
+
+            if (!response.ok) {
+                const data = await response.json();
+                throw new Error(data.detail || "Registration failed");
+            }
+
+            const data = await response.json();
+            console.log("Account created:", data);
+            onAccountCreated();
+        } catch (err: any) {
+            console.error("Signup error:", err);
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -27,8 +57,31 @@ const CreateAccountPage: React.FC<CreateAccountPageProps> = ({ onAccountCreated,
                 justifyContent: "center",
                 height: "100vh",
                 backgroundColor: "#f9f9f9",
+                position: "relative",
             }}
         >
+            <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={onBack}
+                style={{
+                    position: "absolute",
+                    top: "20px",
+                    left: "20px",
+                    background: "none",
+                    border: "none",
+                    fontSize: "1.5rem",
+                    cursor: "pointer",
+                    color: "#333",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "5px",
+                    fontWeight: "600"
+                }}
+            >
+                ← Back
+            </motion.button>
+
             <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -44,6 +97,12 @@ const CreateAccountPage: React.FC<CreateAccountPageProps> = ({ onAccountCreated,
                 <h2 style={{ color: "#CC0000", fontWeight: "800", marginBottom: "30px", textAlign: "center", fontSize: "2rem" }}>
                     Join CanMap
                 </h2>
+
+                {error && (
+                    <div style={{ color: "red", marginBottom: "15px", textAlign: "center" }}>
+                        {error}
+                    </div>
+                )}
 
                 <form onSubmit={handleSignup} style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
                     <div>
@@ -107,19 +166,20 @@ const CreateAccountPage: React.FC<CreateAccountPageProps> = ({ onAccountCreated,
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         type="submit"
+                        disabled={loading}
                         style={{
                             marginTop: "10px",
                             padding: "14px",
-                            backgroundColor: "#CC0000",
+                            backgroundColor: loading ? "#ccc" : "#CC0000",
                             color: "white",
                             border: "none",
                             borderRadius: "8px",
                             fontWeight: "bold",
                             fontSize: "1rem",
-                            cursor: "pointer",
+                            cursor: loading ? "not-allowed" : "pointer",
                         }}
                     >
-                        Sign Up
+                        {loading ? "Creating Account..." : "Sign Up"}
                     </motion.button>
                 </form>
 
@@ -136,5 +196,6 @@ const CreateAccountPage: React.FC<CreateAccountPageProps> = ({ onAccountCreated,
         </div>
     );
 };
+
 
 export default CreateAccountPage;
