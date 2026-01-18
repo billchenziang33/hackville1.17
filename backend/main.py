@@ -4,12 +4,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
-from app.routers import auth_router, profile_router
-from app.database import init_db
+from app.api import user_preferences
 
 # Initialize database (skip during testing)
-if not settings.testing:
-    init_db()
+# if not settings.testing:
+#     init_db()
 
 # Create FastAPI app
 app = FastAPI(
@@ -29,9 +28,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include routers
-app.include_router(auth_router)
-app.include_router(profile_router)
+# Register routes
+app.include_router(user_preferences.router)
+
 
 @app.get("/")
 async def root():
