@@ -21,7 +21,6 @@ Based on the user's profile, suggest relevant places in their city.
 
 USER PROFILE:
 - Ethnicity: {profile.get('ethnicity', 'Not specified')}
-- Background: {profile.get('background', 'Not specified')}
 - Nationality: {profile.get('nationality', 'Not specified')}
 - Religion: {profile.get('religion', 'Not specified')}
 - Language: {profile.get('language', 'Not specified')}
@@ -32,7 +31,7 @@ INSTRUCTIONS:
 Generate a comprehensive list of places for this user in {city}, Ontario, Canada.
 
 MUST INCLUDE:
-1. **Cultural Food**: Restaurants and grocery stores matching their ethnicity/background
+1. **Cultural Food**: Restaurants and grocery stores matching their ethnicity/nationality
 2. **Community Zones**: Cultural neighborhoods (e.g., Chinatown, Little Italy, Little India, Greektown)
 3. **Religious Places**: Temples, mosques, churches, gurdwaras matching their religion
 4. **Government Services**: Service Ontario, Service Canada offices nearby
@@ -83,8 +82,12 @@ Respond ONLY with valid JSON in this exact format (no markdown, no code blocks):
         return {"places": [], "tips": [], "error": str(e)}
 
 
-def search_suggestions(query: str, city: str) -> dict:
+def search_suggestions(query: str, city: str, language: str = "English") -> dict:
     """Generate suggestions based on search query."""
+    
+    language_instruction = ""
+    if language and language.lower() != "english":
+        language_instruction = f"\n\nIMPORTANT: Translate ALL descriptions and tips to {language}. Keep place names and addresses in English but translate descriptions."
     
     prompt = f"""You are an assistant helping people discover places in the Greater Toronto Area.
 User is searching for: "{query}"
@@ -94,7 +97,7 @@ INSTRUCTIONS:
 1. Find relevant places matching this search in {city}, Ontario, Canada
 2. Only include REAL places that actually exist
 3. Include accurate latitude and longitude coordinates
-4. Return 5-10 relevant results
+4. Return 5-10 relevant results{language_instruction}
 
 Target cities: Mississauga, Toronto, Brampton, Scarborough, Oakville
 
@@ -104,7 +107,7 @@ Respond ONLY with valid JSON in this exact format (no markdown, no code blocks):
     {{
       "name": "Place name",
       "type": "restaurant|grocery|religious|community|government|service",
-      "description": "Brief description",
+      "description": "Brief description{'  (in ' + language + ')' if language and language.lower() != 'english' else ''}",
       "address": "Full address",
       "lat": 43.6532,
       "lng": -79.3832
