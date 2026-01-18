@@ -52,14 +52,16 @@ export default function MapPage() {
   const [tips, setTips] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCity, setSelectedCity] = useState("Toronto");
+  const [selectedLanguage, setSelectedLanguage] = useState("English");
   const [loading, setLoading] = useState(false);
 
   const cities = ["Toronto", "Mississauga", "Brampton", "Scarborough", "Oakville"];
+  const languages = ["English", "Hindi", "Punjabi", "Mandarin", "Cantonese", "Arabic", "Urdu", "Tamil", "Tagalog", "Spanish", "Portuguese", "French"];
 
   const fetchSuggestions = async (query?: string) => {
     setLoading(true);
     try {
-      let url = `${API_URL}/suggestions/search?q=${encodeURIComponent(query || "restaurants")}&city=${selectedCity}`;
+      let url = `${API_URL}/suggestions/search?q=${encodeURIComponent(query || "restaurants")}&city=${selectedCity}&language=${selectedLanguage}`;
       const response = await fetch(url);
       const data: SuggestionsResponse = await response.json();
       setPlaces(data.places || []);
@@ -180,42 +182,41 @@ export default function MapPage() {
           position: "absolute",
           top: 15,
           left: 15,
-          right: 15,
           zIndex: 9999,
         }}
       >
         <form onSubmit={handleSearch} style={{ 
           display: "flex", 
-          gap: 8, 
+          gap: 6, 
           background: "white",
-          padding: 10,
-          borderRadius: 12,
-          boxShadow: "0 2px 12px rgba(0,0,0,0.2)",
+          padding: 8,
+          borderRadius: 8,
+          boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
           alignItems: "center",
         }}>
           <input
             type="text"
-            placeholder="Search halal food, German restaurants..."
+            placeholder="Search..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             style={{
               flex: 1,
-              padding: "12px 14px",
-              borderRadius: 8,
-              border: "1px solid #ddd",
-              fontSize: 14,
+              padding: "8px 12px",
+              borderRadius: 6,
+              border: "1px solid #e0e0e0",
+              fontSize: 13,
               outline: "none",
-              minWidth: 200,
+              minWidth: 180,
             }}
           />
           <select
             value={selectedCity}
             onChange={(e) => setSelectedCity(e.target.value)}
             style={{
-              padding: "12px 14px",
-              borderRadius: 8,
-              border: "1px solid #ddd",
-              fontSize: 14,
+              padding: "8px 10px",
+              borderRadius: 6,
+              border: "1px solid #e0e0e0",
+              fontSize: 13,
               background: "white",
               cursor: "pointer",
             }}
@@ -226,22 +227,39 @@ export default function MapPage() {
               </option>
             ))}
           </select>
+          <select
+            value={selectedLanguage}
+            onChange={(e) => setSelectedLanguage(e.target.value)}
+            style={{
+              padding: "8px 10px",
+              borderRadius: 6,
+              border: "1px solid #e0e0e0",
+              fontSize: 13,
+              background: "white",
+              cursor: "pointer",
+            }}
+          >
+            {languages.map((lang) => (
+              <option key={lang} value={lang}>
+                {lang}
+              </option>
+            ))}
+          </select>
           <button
             type="submit"
             disabled={loading}
             style={{
-              padding: "12px 20px",
-              borderRadius: 8,
+              padding: "8px 14px",
+              borderRadius: 6,
               border: "none",
-              background: loading ? "#95a5a6" : "#3498db",
+              background: loading ? "#bdc3c7" : "#27ae60",
               color: "white",
               cursor: loading ? "wait" : "pointer",
-              fontSize: 14,
+              fontSize: 13,
               fontWeight: 600,
-              whiteSpace: "nowrap",
             }}
           >
-            {loading ? "..." : "Search"}
+            {loading ? "..." : "Go"}
           </button>
         </form>
       </div>

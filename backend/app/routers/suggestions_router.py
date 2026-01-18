@@ -34,6 +34,7 @@ async def get_suggestions(
 async def search(
     q: str = Query(..., description="Search query (e.g., 'halal food', 'German restaurants')"),
     city: CityEnum = Query(CityEnum.TORONTO, description="City to search in"),
+    language: str = Query("English", description="Language for descriptions (e.g., 'Hindi', 'Mandarin', 'Arabic')"),
 ):
     """Search for places based on query."""
     if not q.strip():
@@ -42,5 +43,5 @@ async def search(
             detail="Search query cannot be empty",
         )
     
-    suggestions = search_suggestions(q, city.value)
+    suggestions = search_suggestions(q, city.value, language)
     return suggestions
