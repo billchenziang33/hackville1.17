@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -10,10 +10,12 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  FlatList,
 } from 'react-native';
 import * as Location from 'expo-location';
 import { registerPatient } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
+import { MAPBOX_ACCESS_TOKEN } from '../../config';
 
 export default function PatientRegistrationScreen({ navigation }) {
   const { user, refreshProfile } = useAuth();
@@ -23,6 +25,10 @@ export default function PatientRegistrationScreen({ navigation }) {
   const [loading, setLoading] = useState(false);
   const [locationLoading, setLocationLoading] = useState(false);
   const [coordinates, setCoordinates] = useState(null);
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [searchTimeout, setSearchTimeout] = useState(null);
+  const skipNextChangeRef = useRef(false);
 
   const getCurrentLocation = async () => {
     setLocationLoading(true);
@@ -56,6 +62,78 @@ export default function PatientRegistrationScreen({ navigation }) {
     } finally {
       setLocationLoading(false);
     }
+  };
+
+  const searchAddress = async (query) => {
+    if (query.length < 3) {
+      setSuggestions([]);
+      setShowSuggestions(false);
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?access_token=${MAPBOX_ACCESS_TOKEN}&limit=5&types=address,place`
+      );
+      const data = await response.json();
+      
+      if (data.features) {
+        setSuggestions(data.features);
+        setShowSuggestions(true);
+      }
+    } catch (error) {
+      console.log('Address search error:', error);
+    }
+  };
+
+  const handleAddressChange = (text) => {
+    // Skip if we just selected a suggestion
+    if (skipNextChangeRef.current) {
+      console.log('Skipping change handler - suggestion was selected');
+      skipNextChangeRef.current = false;
+      return;
+    }
+    
+    console.log('Address changed by typing:', text);
+    setHomeAddress(text);
+    setCoordinates(null);
+    
+    // Debounce the search
+    if (searchTimeout) {
+      clearTimeout(searchTimeout);
+    }
+    
+    const timeout = setTimeout(() => {
+      searchAddress(text);
+    }, 500);
+    
+    setSearchTimeout(timeout);
+  };
+
+  const selectSuggestion = (suggestion) => {
+    // Set flag to skip the next onChangeText call
+    skipNextChangeRef.current = true;
+    
+    // Hide suggestions first
+    setSuggestions([]);
+    setShowSuggestions(false);
+    
+    // Debug log
+    console.log('Selected suggestion:', suggestion);
+    console.log('Center:', suggestion.center);
+    
+    // Mapbox returns [longitude, latitude] in center array
+    const lng = suggestion.center[0];
+    const lat = suggestion.center[1];
+    
+    console.log('Setting coords:', lat, lng);
+    
+    // Set address and coordinates
+    setHomeAddress(suggestion.place_name);
+    setCoordinates({
+      latitude: lat,
+      longitude: lng,
+    });
   };
 
   const handleRegister = async () => {
@@ -117,12 +195,29 @@ export default function PatientRegistrationScreen({ navigation }) {
             <Text style={styles.label}>Home Address *</Text>
             <TextInput
               style={[styles.input, styles.addressInput]}
-              placeholder="Your home address"
+              placeholder="Start typing your address..."
               placeholderTextColor="#999"
               value={homeAddress}
-              onChangeText={setHomeAddress}
+              onChangeText={handleAddressChange}
               multiline
             />
+
+            {showSuggestions && suggestions.length > 0 && (
+              <View style={styles.suggestionsContainer}>
+                {suggestions.map((item, index) => (
+                  <TouchableOpacity
+                    key={item.id || index}
+                    style={styles.suggestionItem}
+                    onPress={() => selectSuggestion(item)}
+                  >
+                    <Text style={styles.suggestionIcon}>📍</Text>
+                    <Text style={styles.suggestionText} numberOfLines={2}>
+                      {item.place_name}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            )}
 
             <TouchableOpacity
               style={styles.locationButton}
@@ -214,8 +309,33 @@ const styles = StyleSheet.create({
     borderColor: '#e2e8f0',
   },
   addressInput: {
-    minHeight: 80,
+    minHeight: 60,
     textAlignVertical: 'top',
+  },
+  suggestionsContainer: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    marginTop: -12,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    maxHeight: 200,
+  },
+  suggestionItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+  },
+  suggestionIcon: {
+    fontSize: 16,
+    marginRight: 10,
+  },
+  suggestionText: {
+    flex: 1,
+    fontSize: 14,
+    color: '#4a5568',
   },
   locationButton: {
     backgroundColor: '#ebf8ff',

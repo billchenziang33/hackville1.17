@@ -12,6 +12,7 @@ import {
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as Location from 'expo-location';
 import * as Speech from 'expo-speech';
+import * as Clipboard from 'expo-clipboard';
 import { useAuth } from '../../context/AuthContext';
 import { updatePatientLocation, recognizeFace, getRecognitionGreeting } from '../../services/api';
 
@@ -21,7 +22,7 @@ export default function PatientHomeScreen({ navigation }) {
   const { userProfile, logout } = useAuth();
   const [permission, requestPermission] = useCameraPermissions();
   const [locationTracking, setLocationTracking] = useState(false);
-  const [isScanning, setIsScanning] = useState(true);
+  const [isScanning, setIsScanning] = useState(false);
   const [processing, setProcessing] = useState(false);
   const [result, setResult] = useState(null);
   const [showResult, setShowResult] = useState(false);
@@ -30,16 +31,10 @@ export default function PatientHomeScreen({ navigation }) {
 
   useEffect(() => {
     startLocationTracking();
-    if (permission?.granted) {
-      startAutoScan();
-    }
     return () => {
       setLocationTracking(false);
-      if (scanIntervalRef.current) {
-        clearInterval(scanIntervalRef.current);
-      }
     };
-  }, [permission?.granted]);
+  }, []);
 
   useEffect(() => {
     if (!permission?.granted) {
@@ -66,7 +61,7 @@ export default function PatientHomeScreen({ navigation }) {
         } catch (error) {
           console.log('Location update error:', error);
         }
-      }, 30000);
+      }, 5000); // Update every 5 seconds for near-live tracking
 
       const location = await Location.getCurrentPositionAsync({});
       await updatePatientLocation(
@@ -80,13 +75,10 @@ export default function PatientHomeScreen({ navigation }) {
     }
   };
 
-  const startAutoScan = () => {
-    // Scan for faces every 5 seconds
-    scanIntervalRef.current = setInterval(() => {
-      if (!processing && !showResult && isScanning) {
-        captureAndRecognize();
-      }
-    }, 5000);
+  const handleScanPress = () => {
+    if (!processing) {
+      captureAndRecognize();
+    }
   };
 
   const speakRecognition = (name, relationship, greeting, lastConversation) => {
@@ -135,10 +127,14 @@ export default function PatientHomeScreen({ navigation }) {
           greeting.greeting,
           recognition.last_conversation?.summary
         );
+      } else {
+        // No face recognized
+        setResult(null);
       }
     } catch (error) {
-      // Silently fail - no face detected or API error
+      // No face detected or API error
       console.log('Scan error:', error.message);
+      setResult(null);
     } finally {
       setProcessing(false);
     }
@@ -148,15 +144,11 @@ export default function PatientHomeScreen({ navigation }) {
     Speech.stop(); // Stop any ongoing speech
     setShowResult(false);
     setResult(null);
-    setIsScanning(true);
   };
 
   const handleLogout = async () => {
     try {
       Speech.stop();
-      if (scanIntervalRef.current) {
-        clearInterval(scanIntervalRef.current);
-      }
       await logout();
     } catch (error) {
       console.log('Logout error:', error);
@@ -189,44 +181,56 @@ export default function PatientHomeScreen({ navigation }) {
         {/* Overlay with info */}
         <View style={styles.overlay}>
           <View style={styles.header}>
-            <View style={styles.headerRow}>
-              <Text style={styles.greeting}>Hello, {userProfile?.name}!</Text>
-              <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
-                <Text style={styles.logoutText}>Logout</Text>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.statusRow}>
-              {locationTracking && (
-                <View style={styles.badge}>
-                  <Text style={styles.badgeText}>📍 Location</Text>
-                </View>
-              )}
-              {isScanning && (
-                <View style={[styles.badge, styles.scanningBadge]}>
-                  <Text style={styles.badgeText}>👁️ Scanning</Text>
-                </View>
-              )}
-            </View>
+            <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
+              <Text style={styles.logoutText}>Logout</Text>
+            </TouchableOpacity>
+            <Text style={styles.greeting}>Hello, {userProfile?.name}!</Text>
+            {locationTracking && (
+              <View style={styles.badge}>
+                <Text style={styles.badgeText}>📍 Location Active</Text>
+              </View>
+            )}
           </View>
 
-          {/* Scanning indicator */}
-          {processing && (
-            <View style={styles.processingIndicator}>
-              <ActivityIndicator size="small" color="#fff" />
-              <Text style={styles.processingText}>Checking...</Text>
-            </View>
-          )}
+          {/* Center scan button */}
+          <View style={styles.centerContainer}>
+            <TouchableOpacity
+              style={[styles.scanButton, processing && styles.scanButtonDisabled]}
+              onPress={handleScanPress}
+              disabled={processing}
+            >
+              {processing ? (
+                <>
+                  <ActivityIndicator size="large" color="#fff" />
+                  <Text style={styles.scanButtonText}>Scanning...</Text>
+                </>
+              ) : (
+                <>
+                  <Text style={styles.scanButtonEmoji}>📸</Text>
+                  <Text style={styles.scanButtonText}>Tap to Scan</Text>
+                </>
+              )}
+            </TouchableOpacity>
+          </View>
+
+          {/* Patient ID Card */}
+          <TouchableOpacity 
+            style={styles.patientIdCard}
+            onPress={() => {
+              if (userProfile?._id) {
+                Clipboard.setStringAsync(userProfile._id);
+                Alert.alert('Copied!', 'Your Patient ID has been copied to clipboard.\n\nShare this with family members so they can connect with you.');
+              }
+            }}
+          >
+            <Text style={styles.patientIdLabel}>Your Patient ID (tap to copy)</Text>
+            <Text style={styles.patientIdValue}>
+              {userProfile?._id ? `${userProfile._id.slice(0, 6)}...${userProfile._id.slice(-4)}` : 'Loading...'}
+            </Text>
+          </TouchableOpacity>
 
           {/* Bottom buttons */}
           <View style={styles.bottomButtons}>
-            <TouchableOpacity
-              style={styles.bottomButton}
-              onPress={() => navigation.navigate('VoiceRecognition')}
-            >
-              <Text style={styles.buttonEmoji}>🎤</Text>
-              <Text style={styles.buttonLabel}>Voice</Text>
-            </TouchableOpacity>
-
             <TouchableOpacity
               style={styles.bottomButton}
               onPress={() => navigation.navigate('HomeMap')}
@@ -324,16 +328,13 @@ const styles = StyleSheet.create({
     paddingTop: 60,
     paddingHorizontal: 20,
   },
-  headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
   logoutButton: {
     backgroundColor: 'rgba(229, 62, 62, 0.9)',
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 8,
+    alignSelf: 'flex-start',
+    marginBottom: 10,
   },
   logoutText: {
     color: '#fff',
@@ -348,41 +349,68 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 3,
   },
-  statusRow: {
-    flexDirection: 'row',
-    marginTop: 10,
-    gap: 8,
-  },
   badge: {
     backgroundColor: 'rgba(72, 187, 120, 0.8)',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 20,
-  },
-  scanningBadge: {
-    backgroundColor: 'rgba(66, 153, 225, 0.8)',
+    marginTop: 10,
+    alignSelf: 'flex-start',
   },
   badgeText: {
     color: '#fff',
     fontSize: 12,
     fontWeight: '600',
   },
-  processingIndicator: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: [{ translateX: -50 }, { translateY: -50 }],
-    backgroundColor: 'rgba(0,0,0,0.7)',
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    borderRadius: 25,
-    flexDirection: 'row',
+  centerContainer: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
-    gap: 8,
+    paddingTop: 300,
   },
-  processingText: {
+  scanButton: {
+    backgroundColor: 'rgba(66, 153, 225, 0.9)',
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  scanButtonDisabled: {
+    backgroundColor: 'rgba(100, 100, 100, 0.8)',
+  },
+  scanButtonEmoji: {
+    fontSize: 50,
+    marginBottom: 8,
+  },
+  scanButtonText: {
     color: '#fff',
-    fontSize: 14,
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  patientIdCard: {
+    backgroundColor: 'rgba(255,255,255,0.95)',
+    marginHorizontal: 20,
+    marginBottom: 16,
+    padding: 16,
+    borderRadius: 16,
+    alignItems: 'center',
+  },
+  patientIdLabel: {
+    fontSize: 12,
+    color: '#718096',
+    marginBottom: 4,
+  },
+  patientIdValue: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#2d3748',
+    fontFamily: 'monospace',
   },
   bottomButtons: {
     flexDirection: 'row',

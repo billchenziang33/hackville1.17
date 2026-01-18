@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     MAPBOX_ACCESS_TOKEN: str = ""
     
     # App Settings
-    FACE_RECOGNITION_THRESHOLD: float = 0.6
+    FACE_RECOGNITION_THRESHOLD: float = 0.75
     VOICE_RECOGNITION_THRESHOLD: float = 0.75
     
     # JWT Settings

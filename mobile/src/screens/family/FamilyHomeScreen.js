@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   ScrollView,
   Alert,
 } from 'react-native';
+import * as Clipboard from 'expo-clipboard';
 import { useAuth } from '../../context/AuthContext';
 import { logOut } from '../../services/firebase';
 
@@ -20,6 +21,29 @@ export default function FamilyHomeScreen({ navigation }) {
       [
         { text: 'Cancel', style: 'cancel' },
         { text: 'Logout', onPress: () => logOut(), style: 'destructive' },
+      ]
+    );
+  };
+
+  const shortenId = (id) => {
+    if (!id) return '';
+    return `${id.slice(0, 4)}...${id.slice(-4)}`;
+  };
+
+  const copyPatientId = async () => {
+    if (userProfile?.patient_id) {
+      await Clipboard.setStringAsync(userProfile.patient_id);
+      Alert.alert('Copied!', 'Patient ID copied to clipboard');
+    }
+  };
+
+  const showFullPatientId = () => {
+    Alert.alert(
+      'Patient ID',
+      userProfile?.patient_id,
+      [
+        { text: 'Copy', onPress: copyPatientId },
+        { text: 'OK' },
       ]
     );
   };
@@ -60,17 +84,6 @@ export default function FamilyHomeScreen({ navigation }) {
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.card, styles.voiceCard]}
-          onPress={() => navigation.navigate('RegisterVoice')}
-        >
-          <Text style={styles.cardEmoji}>🎙️</Text>
-          <Text style={styles.cardTitle}>Register Voice</Text>
-          <Text style={styles.cardDescription}>
-            Add your voice for recognition
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
           style={[styles.card, styles.conversationCard]}
           onPress={() => navigation.navigate('AddConversation')}
         >
@@ -92,10 +105,13 @@ export default function FamilyHomeScreen({ navigation }) {
           <Text style={styles.infoLabel}>Relationship:</Text>
           <Text style={styles.infoValue}>{userProfile?.relationship}</Text>
         </View>
-        <View style={styles.infoRow}>
+        <TouchableOpacity style={styles.infoRow} onPress={showFullPatientId}>
           <Text style={styles.infoLabel}>Patient ID:</Text>
-          <Text style={styles.infoValue}>{userProfile?.patient_id}</Text>
-        </View>
+          <View style={styles.idContainer}>
+            <Text style={styles.infoValue}>{shortenId(userProfile?.patient_id)}</Text>
+            <Text style={styles.tapHint}>Tap to view full ID</Text>
+          </View>
+        </TouchableOpacity>
       </View>
     </ScrollView>
   );
@@ -223,5 +239,13 @@ const styles = StyleSheet.create({
     color: '#2d3748',
     fontWeight: '500',
     flex: 1,
+  },
+  idContainer: {
+    flex: 1,
+  },
+  tapHint: {
+    fontSize: 10,
+    color: '#4299e1',
+    marginTop: 2,
   },
 });

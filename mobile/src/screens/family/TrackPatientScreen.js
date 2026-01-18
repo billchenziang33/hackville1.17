@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -8,6 +8,7 @@ import {
   Alert,
 } from 'react-native';
 import { WebView } from 'react-native-webview';
+import * as Location from 'expo-location';
 import { useAuth } from '../../context/AuthContext';
 import { getPatientLocation, getPatientHome } from '../../services/api';
 import { MAPBOX_ACCESS_TOKEN } from '../../config';
@@ -16,11 +17,15 @@ export default function TrackPatientScreen({ navigation }) {
   const { userProfile } = useAuth();
   const [patientLocation, setPatientLocation] = useState(null);
   const [homeLocation, setHomeLocation] = useState(null);
+  const [myLocation, setMyLocation] = useState(null);
   const [loading, setLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState(null);
+  const [mapReady, setMapReady] = useState(false);
+  const webViewRef = useRef(null);
 
   const loadLocations = async () => {
     try {
+      // Get patient location and home
       const [location, home] = await Promise.all([
         getPatientLocation(userProfile.patient_id),
         getPatientHome(userProfile.patient_id),
@@ -36,6 +41,17 @@ export default function TrackPatientScreen({ navigation }) {
         address: home.home_address,
       });
       setLastUpdated(new Date(location.timestamp));
+
+      // Get family member's current location
+      try {
+        const myLoc = await Location.getCurrentPositionAsync({});
+        setMyLocation({
+          latitude: myLoc.coords.latitude,
+          longitude: myLoc.coords.longitude,
+        });
+      } catch (locError) {
+        console.log('Could not get my location:', locError);
+      }
     } catch (error) {
       if (error.response?.status === 404) {
         Alert.alert('Location Not Available', 'Patient location is not being shared yet.');
@@ -47,11 +63,41 @@ export default function TrackPatientScreen({ navigation }) {
     }
   };
 
+  // Request location permission on mount
+  useEffect(() => {
+    (async () => {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permission Denied', 'Location permission is needed to show distance to patient');
+      }
+    })();
+  }, []);
+
   useEffect(() => {
     loadLocations();
-    const interval = setInterval(loadLocations, 30000);
+    // Poll every 3 seconds for near-live tracking
+    const interval = setInterval(loadLocations, 3000);
     return () => clearInterval(interval);
   }, []);
+
+  // Update marker position via JS injection instead of reloading map
+  const updateMarkerPosition = (lat, lng) => {
+    if (webViewRef.current && mapReady) {
+      webViewRef.current.injectJavaScript(`
+        if (window.patientMarker) {
+          window.patientMarker.setLngLat([${lng}, ${lat}]);
+        }
+        true;
+      `);
+    }
+  };
+
+  // When patient location changes, update the marker
+  useEffect(() => {
+    if (patientLocation && mapReady) {
+      updateMarkerPosition(patientLocation.latitude, patientLocation.longitude);
+    }
+  }, [patientLocation, mapReady]);
 
   const getMapHtml = () => {
     if (!patientLocation) return '';
@@ -71,26 +117,55 @@ export default function TrackPatientScreen({ navigation }) {
           body { margin: 0; padding: 0; }
           #map { width: 100%; height: 100vh; }
           .marker { font-size: 30px; }
+          .live-indicator {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.7);
+            color: #4ade80;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+          }
+          .live-dot {
+            width: 8px;
+            height: 8px;
+            background: #4ade80;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+          }
+          @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+          }
         </style>
       </head>
       <body>
         <div id="map"></div>
+        <div class="live-indicator">
+          <div class="live-dot"></div>
+          LIVE
+        </div>
         <script>
           mapboxgl.accessToken = '${MAPBOX_ACCESS_TOKEN}';
           const map = new mapboxgl.Map({
             container: 'map',
             style: 'mapbox://styles/mapbox/streets-v12',
             center: [${pLng}, ${pLat}],
-            zoom: 14
+            zoom: 16
           });
           
-          // Patient marker
+          // Patient marker - store globally for updates
           const patientEl = document.createElement('div');
           patientEl.innerHTML = '🧓';
-          patientEl.style.fontSize = '30px';
-          new mapboxgl.Marker(patientEl)
+          patientEl.style.fontSize = '35px';
+          window.patientMarker = new mapboxgl.Marker(patientEl)
             .setLngLat([${pLng}, ${pLat}])
-            .setPopup(new mapboxgl.Popup().setHTML('<h3>Patient Location</h3>'))
+            .setPopup(new mapboxgl.Popup().setHTML('<h3>Patient Location</h3><p>Live tracking</p>'))
             .addTo(map);
           
           // Home marker
@@ -101,6 +176,9 @@ export default function TrackPatientScreen({ navigation }) {
             .setLngLat([${hLng}, ${hLat}])
             .setPopup(new mapboxgl.Popup().setHTML('<h3>Home</h3>'))
             .addTo(map);
+          
+          // Notify React Native that map is ready
+          window.ReactNativeWebView.postMessage('mapReady');
         </script>
       </body>
       </html>
@@ -130,10 +208,16 @@ export default function TrackPatientScreen({ navigation }) {
       <View style={styles.mapContainer}>
         {patientLocation ? (
           <WebView
+            ref={webViewRef}
             source={{ html: getMapHtml() }}
             style={styles.map}
             javaScriptEnabled
             originWhitelist={['*']}
+            onMessage={(event) => {
+              if (event.nativeEvent.data === 'mapReady') {
+                setMapReady(true);
+              }
+            }}
           />
         ) : (
           <View style={styles.noLocationContainer}>
@@ -153,11 +237,20 @@ export default function TrackPatientScreen({ navigation }) {
         </TouchableOpacity>
       </View>
 
-      {patientLocation && homeLocation && (
+      {patientLocation && myLocation && (
         <View style={styles.distanceCard}>
-          <Text style={styles.distanceLabel}>Distance from home</Text>
+          <Text style={styles.distanceLabel}>Distance from you</Text>
           <Text style={styles.distanceValue}>
-            {calculateDistance(patientLocation, homeLocation).toFixed(0)} meters
+            {formatDistance(calculateDistance(patientLocation, myLocation))}
+          </Text>
+        </View>
+      )}
+      
+      {patientLocation && homeLocation && (
+        <View style={[styles.distanceCard, styles.homeDistanceCard]}>
+          <Text style={styles.distanceLabel}>Distance from home</Text>
+          <Text style={styles.distanceValueSmall}>
+            {formatDistance(calculateDistance(patientLocation, homeLocation))}
           </Text>
         </View>
       )}
@@ -178,6 +271,13 @@ function calculateDistance(coord1, coord2) {
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
   return R * c;
+}
+
+function formatDistance(meters) {
+  if (meters >= 1000) {
+    return `${(meters / 1000).toFixed(1)} km`;
+  }
+  return `${Math.round(meters)} m`;
 }
 
 const styles = StyleSheet.create({
@@ -315,5 +415,14 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     color: '#2d3748',
+  },
+  homeDistanceCard: {
+    marginTop: 0,
+    backgroundColor: '#f7fafc',
+  },
+  distanceValueSmall: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#718096',
   },
 });

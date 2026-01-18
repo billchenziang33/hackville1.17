@@ -35,7 +35,25 @@ class FaceRecognitionService:
                 print(f"DeepFace result: {len(embedding_objs)} faces found")
                 
                 if embedding_objs and len(embedding_objs) > 0:
-                    return embedding_objs[0]["embedding"]
+                    face_obj = embedding_objs[0]
+                    # Check if face detection has reasonable confidence
+                    # facial_area should have reasonable dimensions for a real face
+                    facial_area = face_obj.get("facial_area", {})
+                    face_width = facial_area.get("w", 0)
+                    face_height = facial_area.get("h", 0)
+                    face_confidence = face_obj.get("face_confidence", 0)
+                    
+                    print(f"Face area: {face_width}x{face_height}, confidence: {face_confidence}")
+                    
+                    # Reject if face is too small or confidence is too low
+                    if face_width < 50 or face_height < 50:
+                        print("Face too small, likely not a real face")
+                        return None
+                    if face_confidence is not None and face_confidence < 0.5:
+                        print("Face confidence too low, likely not a real face")
+                        return None
+                    
+                    return face_obj["embedding"]
                 return None
             finally:
                 os.unlink(tmp_path)
