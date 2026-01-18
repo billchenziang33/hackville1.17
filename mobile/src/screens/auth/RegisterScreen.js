@@ -11,7 +11,8 @@ import {
   Platform,
   ScrollView,
 } from 'react-native';
-import { signUp } from '../../services/firebase';
+import { signInWithToken } from '../../services/firebase';
+import { backendRegister } from '../../services/api';
 
 export default function RegisterScreen({ navigation }) {
   const [email, setEmail] = useState('');
@@ -37,11 +38,16 @@ export default function RegisterScreen({ navigation }) {
 
     setLoading(true);
     try {
-      await signUp(email, password);
-      // Navigate to role selection
-      navigation.navigate('RoleSelection');
+      const data = await backendRegister(email, password);
+      if (data.success && data.firebase_token) {
+        await signInWithToken(data.firebase_token);
+        // Navigate to role selection
+        navigation.navigate('RoleSelection');
+      } else {
+        Alert.alert('Registration Failed', 'Could not create account');
+      }
     } catch (error) {
-      Alert.alert('Registration Failed', error.message);
+      Alert.alert('Registration Failed', error.response?.data?.detail || error.message);
     } finally {
       setLoading(false);
     }

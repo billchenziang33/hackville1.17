@@ -18,9 +18,10 @@ async def register_face(
     family_member_id: str = Form(...),
     token_data: dict = Depends(verify_firebase_token)
 ):
+    """Register a face for a family member."""
     db = get_database()
     
-
+    # Verify family member exists
     member = await db.family_members.find_one({"_id": ObjectId(family_member_id)})
     if not member:
         raise HTTPException(
@@ -28,6 +29,7 @@ async def register_face(
             detail="Family member not found"
         )
     
+    # Read image and extract embedding
     image_data = await image.read()
     embedding = face_recognition_service.extract_embedding(image_data)
     
@@ -37,6 +39,7 @@ async def register_face(
             detail="Could not detect a face in the image"
         )
     
+    # Store embedding
     embedding_doc = {
         "family_member_id": family_member_id,
         "patient_id": member["patient_id"],
@@ -58,14 +61,17 @@ async def recognize_face(
     patient_id: str = Form(...),
     token_data: dict = Depends(verify_firebase_token)
 ):
+    """Recognize a face and return family member info."""
     db = get_database()
     
+    # Read image and extract embedding
     image_data = await image.read()
     query_embedding = face_recognition_service.extract_embedding(image_data)
     
     if query_embedding is None:
         return RecognitionResult(recognized=False, confidence=0.0)
     
+    # Get all face embeddings for this patient's family
     stored_embeddings = await db.face_embeddings.find(
         {"patient_id": patient_id}
     ).to_list(1000)
@@ -73,6 +79,7 @@ async def recognize_face(
     if not stored_embeddings:
         return RecognitionResult(recognized=False, confidence=0.0)
     
+    # Find best match
     match_id, confidence = face_recognition_service.find_match(
         query_embedding, stored_embeddings
     )
@@ -80,10 +87,12 @@ async def recognize_face(
     if match_id is None:
         return RecognitionResult(recognized=False, confidence=confidence)
     
+    # Get family member info
     member = await db.family_members.find_one({"_id": ObjectId(match_id)})
     if not member:
         return RecognitionResult(recognized=False, confidence=confidence)
     
+    # Get last conversation
     last_conv = await db.conversations.find_one(
         {"patient_id": patient_id, "family_member_id": match_id},
         sort=[("created_at", -1)]
@@ -110,8 +119,10 @@ async def register_voice(
     family_member_id: str = Form(...),
     token_data: dict = Depends(verify_firebase_token)
 ):
+    """Register a voice for a family member."""
     db = get_database()
     
+    # Verify family member exists
     member = await db.family_members.find_one({"_id": ObjectId(family_member_id)})
     if not member:
         raise HTTPException(
@@ -119,6 +130,7 @@ async def register_voice(
             detail="Family member not found"
         )
     
+    # Read audio and extract embedding
     audio_data = await audio.read()
     embedding = voice_recognition_service.extract_embedding(audio_data)
     
@@ -128,6 +140,7 @@ async def register_voice(
             detail="Could not extract voice features from audio"
         )
     
+    # Store embedding
     embedding_doc = {
         "family_member_id": family_member_id,
         "patient_id": member["patient_id"],
@@ -149,14 +162,17 @@ async def recognize_voice(
     patient_id: str = Form(...),
     token_data: dict = Depends(verify_firebase_token)
 ):
+    """Recognize a voice and return family member info."""
     db = get_database()
     
+    # Read audio and extract embedding
     audio_data = await audio.read()
     query_embedding = voice_recognition_service.extract_embedding(audio_data)
     
     if query_embedding is None:
         return RecognitionResult(recognized=False, confidence=0.0)
     
+    # Get all voice embeddings for this patient's family
     stored_embeddings = await db.voice_embeddings.find(
         {"patient_id": patient_id}
     ).to_list(1000)
@@ -164,6 +180,7 @@ async def recognize_voice(
     if not stored_embeddings:
         return RecognitionResult(recognized=False, confidence=0.0)
     
+    # Find best match
     match_id, confidence = voice_recognition_service.find_match(
         query_embedding, stored_embeddings
     )
@@ -171,11 +188,12 @@ async def recognize_voice(
     if match_id is None:
         return RecognitionResult(recognized=False, confidence=confidence)
     
+    # Get family member info
     member = await db.family_members.find_one({"_id": ObjectId(match_id)})
     if not member:
         return RecognitionResult(recognized=False, confidence=confidence)
     
-
+    # Get last conversation
     last_conv = await db.conversations.find_one(
         {"patient_id": patient_id, "family_member_id": match_id},
         sort=[("created_at", -1)]
@@ -201,7 +219,7 @@ async def get_recognition_greeting(
     family_member_id: str = Form(...),
     token_data: dict = Depends(verify_firebase_token)
 ):
-
+    """Generate a greeting message for a recognized family member."""
     db = get_database()
     
     member = await db.family_members.find_one({"_id": ObjectId(family_member_id)})

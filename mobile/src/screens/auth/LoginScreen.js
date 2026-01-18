@@ -11,8 +11,9 @@ import {
 } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as Speech from 'expo-speech';
-import { signIn, signInWithToken } from '../../services/firebase';
+import { signInWithToken } from '../../services/firebase';
 import { API_URL } from '../../config';
+import { backendLogin } from '../../services/api';
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
@@ -110,10 +111,20 @@ export default function LoginScreen({ navigation }) {
     }
 
     setLoading(true);
+    console.log('Attempting login to backend...');
     try {
-      await signIn(email, password);
+      const data = await backendLogin(email, password);
+      console.log('Backend response:', data);
+      if (data.success && data.firebase_token) {
+        console.log('Signing in with token...');
+        await signInWithToken(data.firebase_token);
+        console.log('Sign in complete');
+      } else {
+        Alert.alert('Login Failed', 'Invalid credentials');
+      }
     } catch (error) {
-      Alert.alert('Login Failed', error.message);
+      console.log('Login error:', error);
+      Alert.alert('Login Failed', error.response?.data?.detail || error.message);
     } finally {
       setLoading(false);
     }

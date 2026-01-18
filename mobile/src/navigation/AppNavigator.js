@@ -3,11 +3,15 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { ActivityIndicator, View } from 'react-native';
 import { useAuth } from '../context/AuthContext';
+
+// Auth Screens
 import LoginScreen from '../screens/auth/LoginScreen';
 import RegisterScreen from '../screens/auth/RegisterScreen';
 import RoleSelectionScreen from '../screens/auth/RoleSelectionScreen';
 import PatientRegistrationScreen from '../screens/auth/PatientRegistrationScreen';
 import FamilyRegistrationScreen from '../screens/auth/FamilyRegistrationScreen';
+
+// Patient Screens
 import PatientHomeScreen from '../screens/patient/PatientHomeScreen';
 import FaceRecognitionScreen from '../screens/patient/FaceRecognitionScreen';
 import VoiceRecognitionScreen from '../screens/patient/VoiceRecognitionScreen';
@@ -15,6 +19,8 @@ import HomeMapScreen from '../screens/patient/HomeMapScreen';
 import FamilyListScreen from '../screens/patient/FamilyListScreen';
 import RecordConversationScreen from '../screens/patient/RecordConversationScreen';
 import SetupFaceLoginScreen from '../screens/patient/SetupFaceLoginScreen';
+
+// Family Screens
 import FamilyHomeScreen from '../screens/family/FamilyHomeScreen';
 import TrackPatientScreen from '../screens/family/TrackPatientScreen';
 import RegisterFaceScreen from '../screens/family/RegisterFaceScreen';

@@ -18,6 +18,19 @@ api.interceptors.request.use(async (config) => {
   return config;
 });
 
+// Auth APIs (backend handles Firebase)
+export const backendRegister = async (email, password) => {
+  console.log('Calling backend register at:', `${API_URL}/auth/register`);
+  const response = await axios.post(`${API_URL}/auth/register`, { email, password });
+  return response.data;
+};
+
+export const backendLogin = async (email, password) => {
+  console.log('Calling backend login at:', `${API_URL}/auth/login`);
+  const response = await axios.post(`${API_URL}/auth/login`, { email, password });
+  return response.data;
+};
+
 // Patient APIs
 export const registerPatient = async (patientData) => {
   const response = await api.post('/patients/register', patientData);
@@ -75,6 +88,24 @@ export const registerFace = async (imageUri, familyMemberId) => {
 
   const token = await getIdToken();
   const response = await axios.post(`${API_URL}/recognition/face/register`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+};
+
+export const registerPatientFace = async (imageUri) => {
+  const formData = new FormData();
+  formData.append('image', {
+    uri: imageUri,
+    type: 'image/jpeg',
+    name: 'face.jpg',
+  });
+
+  const token = await getIdToken();
+  const response = await axios.post(`${API_URL}/patients/register-face`, formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
       Authorization: `Bearer ${token}`,

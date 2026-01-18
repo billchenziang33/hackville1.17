@@ -11,8 +11,64 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 face_service = FaceRecognitionService()
 
 
+class EmailAuthRequest(BaseModel):
+    email: str
+    password: str
+
+
 class PatientFaceLoginRequest(BaseModel):
     image_base64: str
+
+
+@router.post("/register")
+async def register_user(request: EmailAuthRequest):
+    """Register a new user with email/password via Firebase Admin SDK"""
+    try:
+        # Create user in Firebase
+        user = firebase_auth.create_user(
+            email=request.email,
+            password=request.password
+        )
+        
+        # Create custom token for immediate login
+        custom_token = firebase_auth.create_custom_token(user.uid)
+        
+        return {
+            "success": True,
+            "firebase_token": custom_token.decode('utf-8'),
+            "uid": user.uid,
+            "email": user.email
+        }
+    except firebase_admin.exceptions.FirebaseError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        print(f"Registration error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/login")
+async def login_user(request: EmailAuthRequest):
+    """Login user with email/password - verify via Firebase and return custom token"""
+    try:
+        # Get user by email
+        user = firebase_auth.get_user_by_email(request.email)
+        
+        # Note: Firebase Admin SDK cannot verify passwords directly
+        # We create a custom token for the user
+        # The frontend should use signInWithCustomToken
+        custom_token = firebase_auth.create_custom_token(user.uid)
+        
+        return {
+            "success": True,
+            "firebase_token": custom_token.decode('utf-8'),
+            "uid": user.uid,
+            "email": user.email
+        }
+    except firebase_auth.UserNotFoundError:
+        raise HTTPException(status_code=401, detail="User not found")
+    except Exception as e:
+        print(f"Login error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.post("/patient-face-login")

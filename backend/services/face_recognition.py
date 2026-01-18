@@ -22,12 +22,17 @@ class FaceRecognitionService:
                 tmp.write(image_data)
                 tmp_path = tmp.name
             
+            print(f"Extracting face embedding from image ({len(image_data)} bytes)")
+            
             try:
                 embedding_objs = DeepFace.represent(
                     img_path=tmp_path,
                     model_name=self.model_name,
-                    enforce_detection=True
+                    enforce_detection=False,
+                    detector_backend="opencv"
                 )
+                
+                print(f"DeepFace result: {len(embedding_objs)} faces found")
                 
                 if embedding_objs and len(embedding_objs) > 0:
                     return embedding_objs[0]["embedding"]
@@ -37,6 +42,8 @@ class FaceRecognitionService:
                 
         except Exception as e:
             print(f"Face embedding extraction error: {e}")
+            import traceback
+            traceback.print_exc()
             return None
     
     def extract_embedding_from_base64(self, base64_image: str) -> Optional[List[float]]:

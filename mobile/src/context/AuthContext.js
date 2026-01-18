@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
-import { onAuthChange } from '../services/firebase';
+import { onAuthChange, logOut } from '../services/firebase';
 import { getPatientProfile, getFamilyMemberProfile } from '../services/api';
 
 const AuthContext = createContext({});
@@ -7,7 +7,7 @@ const AuthContext = createContext({});
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [userProfile, setUserProfile] = useState(null);
-  const [userType, setUserType] = useState(null); // 'patient' or 'family_member'
+  const [userType, setUserType] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -15,7 +15,6 @@ export const AuthProvider = ({ children }) => {
       setUser(firebaseUser);
       
       if (firebaseUser) {
-        // Try to get user profile
         try {
           const patientProfile = await getPatientProfile();
           setUserProfile(patientProfile);
@@ -26,7 +25,6 @@ export const AuthProvider = ({ children }) => {
             setUserProfile(familyProfile);
             setUserType('family_member');
           } catch (e2) {
-            // User exists in Firebase but not registered in our system
             setUserProfile(null);
             setUserType(null);
           }
@@ -61,6 +59,18 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const logout = async () => {
+    try {
+      await logOut();
+      setUser(null);
+      setUserProfile(null);
+      setUserType(null);
+    } catch (error) {
+      console.log('Logout error:', error);
+      throw error;
+    }
+  };
+
   return (
     <AuthContext.Provider value={{
       user,
@@ -68,6 +78,7 @@ export const AuthProvider = ({ children }) => {
       userType,
       loading,
       refreshProfile,
+      logout,
       isPatient: userType === 'patient',
       isFamilyMember: userType === 'family_member',
     }}>
