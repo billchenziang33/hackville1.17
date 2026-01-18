@@ -26,7 +26,7 @@ export default function MapPage() {
     try {
       const map = new mapboxgl.Map({
         container: mapContainerRef.current,
-        style: "mapbox://styles/mapbox/dark-v11",
+        style: "mapbox://styles/mapbox/light-v11",
         center: [-79.3832, 43.6532],
         zoom: 10,
       });

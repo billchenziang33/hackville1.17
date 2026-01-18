@@ -26,13 +26,13 @@ class AuthService:
             firebase_user = firebase_auth.create_user(
                 email=user_data.email,
                 password=user_data.password,
-                display_name=user_data.email,
+                display_name=user_data.username,
             )
 
             user = User(
                 firebase_uid=firebase_user.uid,
                 email=user_data.email,
-                username=user_data.email,
+                username=user_data.username,
             )
             return self.repo.create_user(user)
 
