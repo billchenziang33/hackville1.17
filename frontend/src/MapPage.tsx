@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import Chatbot from './Chatbot';
 
 const TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
 const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
@@ -55,8 +54,6 @@ export default function MapPage() {
   const [selectedCity, setSelectedCity] = useState("Toronto");
   const [loading, setLoading] = useState(false);
 
-    const [chatbotSelectedPlace, setChatbotSelectedPlace] = useState<any>(null);
-
   const cities = ["Toronto", "Mississauga", "Brampton", "Scarborough", "Oakville"];
 
   const fetchSuggestions = async (query?: string) => {
@@ -74,54 +71,6 @@ export default function MapPage() {
       setLoading(false);
     }
   };
-
-    const handleChatbotPlaceSelect = (place: any) => {
-        console.log('Chatbot selected place:', place);
-        setChatbotSelectedPlace(place);
-
-        if (mapRef.current && place) {
-            // 移除之前的Chatbot标记
-            const existingChatbotMarkers = document.querySelectorAll('.chatbot-marker');
-            existingChatbotMarkers.forEach(marker => marker.remove());
-
-            const el = document.createElement('div');
-            el.className = 'chatbot-marker';
-            el.innerHTML = `<div style="
-      background: #FF4081;
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      box-shadow: 0 4px 15px rgba(255, 64, 129, 0.4);
-      border: 3px solid white;
-      cursor: pointer;
-      animation: pulse 2s infinite;
-    ">🤖</div>`;
-
-            const popup = new mapboxgl.Popup({ offset: 25, maxWidth: "300px" }).setHTML(`
-      <div style="padding: 5px;">
-        <h3 style="margin: 0 0 8px 0; font-size: 16px; font-weight: 600; color: #1a1a1a;">🤖 ${place.name}</h3>
-        <p style="margin: 0 0 8px 0; font-size: 12px; color: white; background: #FF4081; padding: 4px 8px; border-radius: 4px; display: inline-block;">CHATBOT SUGGESTION</p>
-        <p style="margin: 8px 0; font-size: 13px; color: #444; line-height: 1.4;">${place.description}</p>
-        <p style="margin: 0; font-size: 12px; color: #888;">📍 ${place.address}</p>
-      </div>
-    `);
-
-            new mapboxgl.Marker({ element: el })
-                .setLngLat([place.lng, place.lat])
-                .setPopup(popup)
-                .addTo(mapRef.current);
-
-            mapRef.current.flyTo({
-                center: [place.lng, place.lat],
-                zoom: 14,
-                essential: true
-            });
-        }
-    };
 
   const addMarkersToMap = (placesData: Place[]) => {
     if (!mapRef.current) return;
@@ -412,17 +361,6 @@ export default function MapPage() {
       )}
 
       <div ref={mapContainerRef} style={{ width: "100%", height: "100%" }} />
-        <Chatbot
-            onPlaceSelect={handleChatbotPlaceSelect}
-            userCity={selectedCity}
-        />
-        <style>{`
-  @keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-    100% { transform: scale(1); }
-  }
-`}</style>
     </div>
   );
 }

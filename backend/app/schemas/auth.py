@@ -7,6 +7,7 @@ class UserRegister(BaseModel):
     """User registration request."""
 
     email: EmailStr
+    username: str
     password: str
 
 

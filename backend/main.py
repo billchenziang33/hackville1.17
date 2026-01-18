@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
-from app.routers import auth_router, profile_router, suggestions_router
+from app.routers import auth_router, profile_router
 from app.database import init_db
 
 # Initialize database (skip during testing)
@@ -32,7 +32,6 @@ app.add_middleware(
 # Include routers
 app.include_router(auth_router)
 app.include_router(profile_router)
-app.include_router(suggestions_router)
 
 @app.get("/")
 async def root():
