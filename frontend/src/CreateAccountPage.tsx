@@ -183,15 +183,6 @@ const CreateAccountPage: React.FC<CreateAccountPageProps> = ({ onAccountCreated,
                     </motion.button>
                 </form>
 
-                <div style={{ marginTop: "20px", textAlign: "center", fontSize: "0.9rem", color: "#666" }}>
-                    Already have an account?{" "}
-                    <span
-                        onClick={onLoginClick}
-                        style={{ color: "#CC0000", fontWeight: "bold", cursor: "pointer", textDecoration: "underline" }}
-                    >
-                        Login here
-                    </span>
-                </div>
             </motion.div>
         </div>
     );
