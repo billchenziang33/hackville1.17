@@ -1,0 +1,143 @@
+{
+  "cultural_districts": [
+    {
+      "id": "chinatown",
+      "name": "Chinatown (Dundas)",
+      "location": "Dundas St W & Spadina Ave, Toronto, ON",
+      "primary_community": "Early Hong Kong/Guangdong immigrants and new international students",
+      "cultural_characteristics": [
+        "Traditional Chinese architecture with decorative gates",
+        "Herbal medicine shops and traditional Chinese medicine clinics",
+        "Cantonese as the dominant service language",
+        "Lunar New Year parade and traditional festival celebrations",
+        "Dense concentration of Asian grocery stores and restaurants"
+      ],
+      "key_services_needed": [
+        "Cantonese-language social programs for isolated seniors",
+        "International student orientation and settlement services",
+        "Food banks stocking traditional Chinese ingredients",
+        "Affordable healthcare clinics with Cantonese/Mandarin speakers",
+        "Cultural preservation and language classes"
+      ],
+      "service_languages": ["Cantonese", "Mandarin", "English"],
+      "cultural_events": ["Lunar New Year Parade", "Mid-Autumn Festival", "Night Market"]
+    },
+    {
+      "id": "little_italy",
+      "name": "Little Italy",
+      "location": "College St between Bathurst St and Ossington Ave, Toronto, ON",
+      "primary_community": "Italian-Canadians (multi-generational families)",
+      "cultural_characteristics": [
+        "Traditional Italian cafes and espresso bars",
+        "Family-owned trattorias and gelaterias",
+        "Summer patio culture with sidewalk dining",
+        "Soccer (calcio) fan culture with sports bars",
+        "European-style pedestrian-friendly streets"
+      ],
+      "key_services_needed": [
+        "Italian-language elder care and senior social programs",
+        "Cultural heritage workshops and cooking classes",
+        "Small business support for family-owned restaurants",
+        "Community gathering spaces with piazza-style design",
+        "Intergenerational family support services"
+      ],
+      "service_languages": ["Italian", "English"],
+      "cultural_events": ["Taste of Little Italy Festival", "Italian Week", "European-style street festivals"]
+    },
+    {
+      "id": "koreatown",
+      "name": "Koreatown",
+      "location": "Bloor St W between Bathurst St and Christie St, Toronto, ON",
+      "primary_community": "Korean immigrants, international students, and young professionals",
+      "cultural_characteristics": [
+        "24-hour business culture with late-night restaurants",
+        "Korean BBQ restaurants and specialized cafes",
+        "K-POP music stores and beauty supply shops",
+        "High concentration of tech and electronics stores",
+        "Modern, clean aesthetic with neon signage"
+      ],
+      "key_services_needed": [
+        "Korean-language mental health and counseling services",
+        "International student employment and career counseling",
+        "Driver's license conversion assistance for Korean licenses",
+        "Digital literacy programs for older immigrants",
+        "Cultural adaptation support for new arrivals"
+      ],
+      "service_languages": ["Korean", "English"],
+      "cultural_events": ["Korean Festival", "K-POP concerts and events", "Traditional Korean holiday celebrations"]
+    },
+    {
+      "id": "jtown",
+      "name": "J-Town (Japanese Community)",
+      "location": "Steeles Ave & Victoria Park Ave, North Scarborough, Toronto, ON",
+      "primary_community": "Japanese expatriate families and Japanese-Canadians",
+      "cultural_characteristics": [
+        "Exceptionally clean and orderly commercial areas",
+        "Japanese supermarkets with imported goods",
+        "Manga/book stores and traditional craft shops",
+        "Minimalist design aesthetic",
+        "Quiet, respectful public behavior norms"
+      ],
+      "key_services_needed": [
+        "Japanese-language educational resources for children",
+        "Transition support for expatriate families on fixed-term contracts",
+        "Detailed recycling and waste sorting guidance (3+ categories)",
+        "Temporary housing assistance for corporate transferees",
+        "Cultural exchange programs to prevent isolation"
+      ],
+      "service_languages": ["Japanese", "English"],
+      "cultural_events": ["Sakura (Cherry Blossom) Festival", "Matsuri summer festivals", "Cultural demonstrations"]
+    },
+    {
+      "id": "little_portugal",
+      "name": "Little Portugal",
+      "location": "Dundas St W between Ossington Ave and Dufferin St, Toronto, ON",
+      "primary_community": "Portuguese immigrants and their descendants (multi-generational)",
+      "cultural_characteristics": [
+        "Portuguese bakeries specializing in pastel de nata (custard tarts)",
+        "Grilled chicken (churrasqueira) restaurants",
+        "High density of Catholic churches with Portuguese services",
+        "Blue and white decorative motifs (inspired by Azulejo tiles)",
+        "Strong community soccer (futebol) culture"
+      ],
+      "key_services_needed": [
+        "Portuguese-language legal and immigration consultation",
+        "Construction and trades union information (dominant employment sector)",
+        "Senior services with Portuguese-speaking staff",
+        "Community sports facilities and soccer league support",
+        "Small business financing for family-owned shops"
+      ],
+      "service_languages": ["Portuguese", "English"],
+      "cultural_events": ["Portugal Day celebrations", "Santo Cristo Festival", "Street festivals with traditional music"]
+    },
+    {
+      "id": "greektown",
+      "name": "Greektown (The Danforth)",
+      "location": "Danforth Ave between Broadview Ave and Jones Ave, Toronto, ON",
+      "primary_community": "Greek-Canadians (well-established community)",
+      "cultural_characteristics": [
+        "Blue and white color scheme (inspired by Greek islands)",
+        "Mediterranean restaurants with outdoor seating",
+        "Greek pastry shops (baklava, loukoumades)",
+        "Greek Orthodox churches as community centers",
+        "European-style cafe culture with strong coffee"
+      ],
+      "key_services_needed": [
+        "Greek-language health services focusing on cardiac care",
+        "Mediterranean diet education and cooking classes",
+        "Senior programs addressing social isolation",
+        "Cultural preservation and Greek language classes",
+        "Small business support for family-owned restaurants"
+      ],
+      "service_languages": ["Greek", "English"],
+      "cultural_events": ["Taste of the Danforth Festival", "Greek Independence Day parade", "Orthodox Easter celebrations"]
+    }
+  ],
+  "metadata": {
+    "city": "Toronto, Ontario",
+    "data_source": "Compiled from Toronto cultural district profiles, census data, and community organization reports",
+    "last_updated": "2026-01-18",
+    "purpose": "AccessLocal community resource navigation platform - cultural sensitivity optimization",
+    "note": "Services listed reflect commonly identified needs based on demographic profiles and community consultations"
+  }
+}
