@@ -2,6 +2,16 @@
 
 from pydantic import BaseModel, Field
 from typing import Optional
+from enum import Enum
+
+
+class CityEnum(str, Enum):
+    """Supported cities."""
+    TORONTO = "Toronto"
+    MISSISSAUGA = "Mississauga"
+    BRAMPTON = "Brampton"
+    SCARBOROUGH = "Scarborough"
+    OAKVILLE = "Oakville"
 
 
 class UserProfileCreate(BaseModel):
@@ -11,6 +21,9 @@ class UserProfileCreate(BaseModel):
     background: Optional[str] = None
     nationality: Optional[str] = None
     language: Optional[str] = None
+    religion: Optional[str] = None
+    time_in_canada_months: Optional[int] = None
+    city: Optional[CityEnum] = None
 
 
 class UserProfileUpdate(BaseModel):
@@ -20,6 +33,9 @@ class UserProfileUpdate(BaseModel):
     background: Optional[str] = None
     nationality: Optional[str] = None
     language: Optional[str] = None
+    religion: Optional[str] = None
+    time_in_canada_months: Optional[int] = None
+    city: Optional[CityEnum] = None
 
 
 class UserProfileResponse(BaseModel):
@@ -31,6 +47,9 @@ class UserProfileResponse(BaseModel):
     background: Optional[str] = None
     nationality: Optional[str] = None
     language: Optional[str] = None
+    religion: Optional[str] = None
+    time_in_canada_months: Optional[int] = None
+    city: Optional[str] = None
 
     class Config:
         populate_by_name = True
