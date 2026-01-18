@@ -1,0 +1,39 @@
+[project]
+name = "backend"
+version = "0.1.0"
+description = "Alzheimer's Patient Care App - Face/Voice Recognition & Location Tracking"
+requires-python = ">=3.11,<3.13"
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.32.0",
+    "python-multipart>=0.0.12",
+    "pymongo>=4.10.0",
+    "motor>=3.6.0",
+    "firebase-admin>=6.6.0",
+    "python-jose[cryptography]>=3.3.0",
+    "passlib[bcrypt]>=1.7.4",
+    "pydantic>=2.10.0",
+    "pydantic-settings>=2.6.0",
+    "numpy>=1.26.0,<2.0.0",
+    "opencv-python>=4.10.0",
+    "deepface>=0.0.93",
+    "speechbrain>=1.0.0",
+    "torchaudio>=2.0.0",
+    "google-generativeai>=0.8.0",
+    "python-dotenv>=1.0.1",
+    "httpx>=0.28.0",
+    "pillow>=10.0.0",
+    "scipy>=1.11.0",
+    "librosa>=0.10.0",
+    "tf-keras>=2.17.0",
+    "certifi>=2026.1.4",
+    "dnspython>=2.8.0",
+    "soundfile>=0.13.1",
+    "pydub>=0.25.1",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3.0",
+    "pytest-asyncio>=0.24.0",
+]
