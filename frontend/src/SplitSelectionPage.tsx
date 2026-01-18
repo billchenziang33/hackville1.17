@@ -120,7 +120,7 @@ const SplitSelectionPage: React.FC<SplitSelectionPageProps> = ({
         style={{
           position: "absolute",
           bottom: "40px",
-          left: "50%",
+          left: "45%",
           transform: "translateX(-50%)",
           padding: "12px 35px",
           background: "#1a1a1a",
