@@ -1,7 +1,34 @@
+import { useState } from "react";
+import IntroPage from "./IntroPage";
+import LoginPage from "./LoginPage";
+import CreateAccountPage from "./CreateAccountPage";
 import MapPage from "./MapPage";
 
 function App() {
-  return <MapPage />;
+  const [currentView, setCurrentView] = useState<"intro" | "login" | "register" | "map">("intro");
+
+  return (
+    <>
+      {currentView === "intro" && (
+        <IntroPage onGetStartedClick={() => setCurrentView("login")} />
+      )}
+      {currentView === "login" && (
+        <LoginPage
+          onLoginSuccess={() => setCurrentView("map")}
+          onCreateAccountClick={() => setCurrentView("register")}
+        />
+      )}
+      {currentView === "register" && (
+        <CreateAccountPage
+          onAccountCreated={() => setCurrentView("map")}
+          onLoginClick={() => setCurrentView("login")}
+        />
+      )}
+      {currentView === "map" && (
+        <MapPage />
+      )}
+    </>
+  );
 }
 
 export default App;

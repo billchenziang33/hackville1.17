@@ -126,3 +126,5 @@ dmypy.json
 *.db
 *.sqlite
 *.sqlite3
+
+hackvile2026.json
